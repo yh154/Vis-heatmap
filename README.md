@@ -2,9 +2,13 @@
 
 Client-side web app that parses DESeq2 output and renders a clustered, row-scaled heatmap with PDF export.
 
+> [!NOTE]
+> **Expression values are read from columns strictly between `gene_name` and `baseMean`. Edit your file as necessary.**
+
+
 ## How To Use
 
-Download the app to your computer. Unzip if necessary.
+Download and decompress the app to your computer. 
 
 Open `index.html` in a browser, upload files, set cutoffs, click **Generate Heatmap**, then export PDF if needed.
 
@@ -16,9 +20,8 @@ Upload a DESeq2 result file (`.csv`, `.tsv`, or `.txt`) containing at least:
 - `padj`
 - `log2FoldChange`
 - `baseMean`
-
-**Expression values are read from columns strictly between `gene_name` and `baseMean`.**
-
+- `columns of expression values embeded between gene_name and baseMean`
+  
 Optional:
 
 - Gene list file (`.csv`, `.tsv`, or plain text)
