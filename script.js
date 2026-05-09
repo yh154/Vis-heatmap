@@ -24,6 +24,7 @@ const log2fcCutoffInput = document.getElementById("log2FCCutoff");
 const log2fcRangeText = document.getElementById("log2FCRange");
 const updatePlotButton = document.getElementById("updatePlot");
 const exportPdfButton = document.getElementById("exportPDF");
+const exportSvgButton = document.getElementById("exportSVG");
 const plotInfo = document.getElementById("plotInfo");
 
 function normalizeKey(key) {
@@ -350,6 +351,7 @@ function clusterAndReorder(data) {
 async function renderHeatmap() {
   try {
     exportPdfButton.disabled = true;
+    exportSvgButton.disabled = true;
     setInfo("Processing input files...");
 
     const parsed = await parseDESeq2File();
@@ -384,12 +386,14 @@ async function renderHeatmap() {
     await Plotly.newPlot("heatmapPlot", figureData, figureLayout, { responsive: true, displaylogo: false });
     state.lastFigureReady = true;
     exportPdfButton.disabled = false;
+    exportSvgButton.disabled = false;
     setInfo(
       //`Heatmap ready. Eligible genes: ${matrixData.eligibleCount}. Plotted genes: ${clusteredData.geneNames.length}.`
     );
   } catch (err) {
     state.lastFigureReady = false;
     exportPdfButton.disabled = true;
+    exportSvgButton.disabled = true;
     setInfo(err.message || "Failed to render heatmap.", true);
   }
 }
@@ -421,6 +425,23 @@ async function exportHeatmapPdf() {
   }
 }
 
+async function exportHeatmapSvg() {
+  if (!state.lastFigureReady) {
+    setInfo("Generate a heatmap before exporting.", true);
+    return;
+  }
+  try {
+    setInfo("Exporting heatmap to SVG...");
+    await Plotly.downloadImage("heatmapPlot", {
+      format: "svg",
+      filename: "deseq2_heatmap"
+    });
+    setInfo("Export completed: deseq2_heatmap.svg");
+  } catch (err) {
+    setInfo(`SVG export failed: ${err.message || "Unknown error"}`, true);
+  }
+}
+
 async function refreshMaxRangeFromFile() {
   if (!deseqFileInput.files[0]) {
     return;
@@ -447,3 +468,4 @@ bindFileNamePreview(geneFileInput, geneFileName);
 deseqFileInput.addEventListener("change", refreshMaxRangeFromFile);
 updatePlotButton.addEventListener("click", renderHeatmap);
 exportPdfButton.addEventListener("click", exportHeatmapPdf);
+exportSvgButton.addEventListener("click", exportHeatmapSvg);
