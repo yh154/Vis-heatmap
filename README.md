@@ -34,7 +34,7 @@ Optional:
 - Row-scaled (z-score per gene)
 - Both rows and columns clustered
 
-## PDF Export
+## PDF/SVG Export
 
-- Click **Export as PDF** after generating a heatmap
+- Click **Export as PDF/SVG** after generating a heatmap
 - Output filename: `deseq2_heatmap.pdf/.svg`
