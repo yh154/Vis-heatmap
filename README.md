@@ -17,7 +17,7 @@ Upload a DESeq2 result file (`.csv`, `.tsv`, or `.txt`) containing at least:
 - `log2FoldChange`
 - `baseMean`
 
-Expression values are read from columns strictly between `gene_name` and `baseMean`.
+** Expression values are read from columns strictly between `gene_name` and `baseMean`.**
 
 Optional:
 
