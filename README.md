@@ -10,7 +10,7 @@ Client-side web app that parses DESeq2 output and renders a clustered, row-scale
 
 Download and decompress the app to your computer. 
 
-Open `index.html` in a browser, upload files, set cutoffs, click **Generate Heatmap**, then export PDF if needed.
+Open `index.html` in a browser, upload files, set cutoffs, click **Generate Heatmap**, then export PDF/SVG if needed.
 
 ## Input Requirements
 
@@ -37,4 +37,4 @@ Optional:
 ## PDF Export
 
 - Click **Export as PDF** after generating a heatmap
-- Output filename: `deseq2_heatmap.pdf`
+- Output filename: `deseq2_heatmap.pdf/.svg`
