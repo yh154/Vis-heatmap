@@ -1,42 +1,60 @@
-# DESeq2 Heatmap Generator (Shiny + pheatmap)
+# DESeq2 Heatmap Generator (Standalone HTML/JS)
 
-Web app built with R Shiny and `pheatmap` to generate row-scaled clustered heatmaps from DESeq2 output.
+Client-side web app that parses DESeq2 output and renders a clustered, row-scaled heatmap with PDF export.
 
-## Inputs
+## Files
 
-- **DESeq2 result file** (`csv/tsv/txt`, required) with:
-  - `gene_name` (used as heatmap row label)
-  - `padj`
-  - `log2FoldChange`
-- **Expression columns priority**:
-  - first tries expression columns inside DESeq2 (columns between `gene_name` and `baseMean`)
-  - if none exist, uses optional expression matrix file fallback
-- **Optional selected genes file**:
-  - one gene per line, or a table where the first column is gene ID
+- `index.html`: app layout
+- `styles.css`: styling
+- `script.js`: parsing, filtering, clustering, plotting, and export logic
+- `app.R`: older R Shiny implementation (kept unchanged)
 
-## Filters
+## Input Requirements
 
-- `padj.cutoff`: must be within `0` to `1`
-- `log2FC.cutoff`: must be within `0` to max `|log2FoldChange|` from the DESeq2 file
+Upload a DESeq2 result file (`.csv`, `.tsv`, or `.txt`) containing at least:
 
-## Plot behavior
+- `gene_name`
+- `padj`
+- `log2FoldChange`
+- `baseMean`
 
-- genes are filtered by:
-  - `padj <= padj.cutoff`
-  - `|log2FoldChange| >= log2FC.cutoff`
-- if selected genes file is provided, genes must also be in that list
-- each gene row is z-score scaled across samples (`scale = "row"`)
-- row and column clustering are enabled (`cluster_rows = TRUE`, `cluster_cols = TRUE`)
-- color palette uses a Qlik Sense-style diverging scheme
+Expression values are read from columns strictly between `gene_name` and `baseMean`.
 
-## Usage
+Optional:
 
-Install packages (once):
+- Gene list file (`.csv`, `.tsv`, or plain text)
+  - one gene per line, or
+  - table where the first column is gene name
 
-`install.packages(c("shiny", "pheatmap"))`
+## Filtering Logic
 
-Run the app:
+1. If duplicate `gene_name` values exist, keep only the row with higher `log2FoldChange`.
+2. If a gene list is uploaded, overlap it with DESeq2 `gene_name` first.
+3. Apply cutoffs on the overlapped set:
+   - `padj <= padj.cutoff`
+   - `abs(log2FoldChange) >= log2FC.cutoff`
 
-`shiny::runApp("app.R")`
+Input validation:
 
-Then upload files, set thresholds, click **Generate Heatmap**, and use **Export PDF** to save `deseq2_heatmap.pdf`.
+- `padj.cutoff` must be between `0` and `1`
+- `log2FC.cutoff` must be between `0` and max `|log2FoldChange|`
+
+## Heatmap Behavior
+
+- Row-scaled (z-score per gene)
+- Both rows and columns clustered
+- Qlik-style diverging palette
+- Gene labels:
+  - shown when plotted genes are `< 50`
+  - hidden when plotted genes are `>= 50`
+
+## PDF Export
+
+- Click **Export as PDF** after generating a heatmap
+- Output filename: `deseq2_heatmap.pdf`
+
+## Run
+
+No build step required.
+
+Open `index.html` in a browser, upload files, set cutoffs, click **Generate Heatmap**, then export PDF if needed.
